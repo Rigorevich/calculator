@@ -1,70 +1,109 @@
-# Getting Started with Create React App
+# Tестовое задание калькулятор
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Содержание
 
-## Available Scripts
+- [Техническое задание](#Техническое-задание)
+- [Используемые технологии](#Используемые-технологии)
+- [Тестирование](#Тестирование)
+- [Полезные ссылки](#Полезные-ссылки)
 
-In the project directory, you can run:
+## Техническое задание
 
-### `yarn start`
+Необходимо реализовать приложение калькулятор. Приложение должно предоставлять основные арифметические операции, построитель выражений и полную историю всех выражений.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+**Обязательная компонентная модель:**
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- **_Header_** - должен отображать заголовок приложения, а также ссылки на другие страницы.
+- **_Calculator_** - корневой элемент для менеджмента данных калькулятора (логика для хранения истории, операций, текущего состояния и т.д.).
+- **_Display_** - отображает ввод калькулятора, выражения и историю.
+- **_History_** - отображает список ранее выполненных операций.
+- **_ControlPanel_** - используется для управления взаимодействиями калькулятора, которые не связаны с расчетными операциями. Например, он предоставляет функционал для открытия/скрытия истории.
+- **_Keypad_** - используется для ввода операндов, а также выполнения различных операций с этими операндами.
 
-### `yarn test`
+#### Диаграмма компонентов:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+> ![diagramma of components](./image.png)
 
-### `yarn build`
+#### Необходимый функционал:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- Сложение
+- Вычитание
+- Умножение
+- Деление
+- Переключение знака
+- Построитель выражения
+- История операций
+- Показывать полную историю
+- Очистка истории
+- Очистка вычисленного значения и выражения
+- Очистка всего (истории, вычисленного значения и выражения)
+- Точность расчета - 3 символа
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+#### Дополнительный функционал
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- Действительные числа могут быть записаны как 0.5 и .5
+- Операция **%** - остаток от деления
 
-### `yarn eject`
+#### Пример графического представления:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Дизайн является приблизительным и может быть изменен в зависимости от условий задания.
+Ссылка на макет: [Макет "Калькулятор"](https://xd.adobe.com/view/3d64c8c6-a59f-4785-736f-6b50257b8e83-4b55/).
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+#### Также проект предполагает:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+- Организацию файловой структуры react приложения. Ссылка на структуру: [Cтруктура проекта](https://github.com/mkrivel/structure).
+- Для реализации логики приложения, необходимо использовать поведенческий паттерн программирования **_"Команда"_**, который позволяет превращает запросы в объекты, позволяя передавать их как аргументы при вызове методов, ставить запросы в очередь, логировать их, а также поддерживать отмену операций (см. подробнее [паттерн Команда](https://refactoring.guru/ru/design-patterns/command)).
+- Реализация с использованием как классовых, так и функциональных react компонентов и использованием хуков. Разделите весь функционал приложения на две страницы, на одной из которых будет представлена реализация через классовые компоненты, а на второй - через функциональные. Например, в компоненте header должны быть представлены ссылки на следующие страницы: home(FC) и home(CC).
+- Обработку ошибок через паттерн _"Error Boundaries"_
+- Реализация светлой и тёмной темы с использованием _styled-components_
+- Проверку типов в React компонентах, передаваемых параметров и подобных объектов.
+- Использование алиасов для импортирования файлов.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+#### Замечания:
 
-## Learn More
+- Использование библиотеки react-redux не является реализацией паттерна "Команда".
+- Запрещено использование функции **_eval_** и библиотеки **_mathjs_**(или любые другие аналоги) для реализации логики вычисления.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Используемые технологии
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Для react
 
-### Code Splitting
+- **_Node.js_** - программная платформа, основанная на движке V8 (транслирующем JavaScript в машинный код).
+- **_Babel_** - транспайлер, преобразующий код из одного стандарта в другой.
+- **_Webpack_** - инструмент, позволяющий скомпилировать, например, JavaScript модули в единый JS-файл.
+- **_yarn_** - менеджер пакетов.
+- **_react_** - JavaScript-библиотека для создания пользовательских интерфейсов.
+- **_react-router-dom_** - набор навигационных компонентов.
+- **_react-redux_** - инструмент управления состоянием.
+- **_prop-types_** - набор валидаторов, которые могут быть использованы для проверки получаемых данных.
+- **_styled-components_** - система стилизации react компонентов.
+- **_cypress_** — e2e тестирование для веб приложений.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Тестирование
 
-### Analyzing the Bundle Size
+Реализовать e2e тестирование c полным покрытием функционала приложения:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+- Арифметические операции.
+- Модуль истории.
+- Модуль дисплея.
+- Модуль клавиатуры.
+- Модуль навигации.
+- Модуль смены темы и т.д.
 
-### Making a Progressive Web App
+## Полезные ссылки
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+[React](https://reactjs.org/docs/getting-started.html)
 
-### Advanced Configuration
+[React hooks](https://reactjs.org/docs/hooks-intro.html)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+[React router dom](https://reacttraining.com/react-router/web/guides/quick-start)
 
-### Deployment
+[React redux](https://react-redux.js.org/introduction/quick-start)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+[Тестирование Cypress](https://docs.cypress.io/guides/overview/why-cypress.html#In-a-nutshell)
 
-### `yarn build` fails to minify
+[Тестирование Detox](https://github.com/wix/Detox/blob/master/docs/README.md)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+[Styled-components](https://www.styled-components.com/docs)
+
+[Commits convetional](https://www.conventionalcommits.org/en/v1.0.0/#specification)
