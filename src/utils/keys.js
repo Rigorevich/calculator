@@ -2,6 +2,7 @@ export const keys = {
   Backspace: 'C',
   Delete: 'C',
   Enter: '=',
+  Escape: 'CE',
   '*': '*',
   '-': '-',
   '/': '/',

@@ -1,5 +1,14 @@
+function getDecimalCount(num) {
+  if (Number.isInteger(num)) {
+    return 0;
+  } else {
+    const decimalPart = num.toString().split('.')[1];
+    return decimalPart ? decimalPart.length : 0;
+  }
+}
+
 function toRpn(statement) {
-  const statemantArr = statement.match(/[+\-*/()]|\d+\.\d+|\d+/g);
+  const statementArr = statement.match(/[+\-*/()]|\d+\.\d+|\d+/g);
   let result = [];
   let stack = [];
 
@@ -11,8 +20,8 @@ function toRpn(statement) {
     '^': 2,
   };
 
-  for (let i = 0; i < statemantArr.length; ++i) {
-    const character = statemantArr[i];
+  for (let i = 0; i < statementArr.length; ++i) {
+    const character = statementArr[i];
 
     if (!isNaN(Number(character))) {
       result.push(character);
@@ -21,7 +30,7 @@ function toRpn(statement) {
     } else if (character === ')') {
       let s = stack.pop();
 
-      while (s && s != '(') {
+      while (s && s !== '(') {
         result.push(s);
         s = stack.pop();
       }
@@ -68,16 +77,16 @@ function evaluate(expression) {
           stack.push(operand1 / operand2);
           break;
         default:
-          throw new Error(`Uncorrect operator: ${token}`);
+          throw new Error(`Uncorrected operator: ${token}`);
       }
     }
   }
 
   if (stack.length !== 1) {
-    throw new Error('Uncorrect expression');
+    throw new Error('Uncorrected expression');
   }
 
   return `${stack[0]}`;
 }
 
-export { evaluate, toRpn };
+export { evaluate, toRpn, getDecimalCount };

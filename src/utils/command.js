@@ -1,13 +1,18 @@
-import { evaluate } from './calculating';
+import { evaluate, getDecimalCount } from './calculating';
 
 class Command {
   constructor(app, calculator) {
     this.app = app;
     this.calculator = calculator;
+    this.backup = '';
+  }
+
+  saveBackup() {
+    this.backup = this.calculator.currentExpression;
   }
 
   undo() {
-    this.calculator.currentExpression = this.calculator.currentExpression.slice(0, -1);
+    this.calculator.currentExpression = this.backup;
   }
 
   execute() {
@@ -21,41 +26,23 @@ class Calculator {
     this.openParenthesesCount = 0;
   }
 
-  getLastNumber() {
-    const regex = /[+\-*/]?\d+(\.\d+)?$/;
-    const match = this.currentExpression.match(regex);
-    return match ? match[0] : '';
-  }
-
   addDigit(digit) {
-    // if (this.commandHistory.at(-1) instanceof CalculateCommand) {
-    //   this.currentExpression = digit;
-    //   return;
-    // }
-
-    const lastNumber = this.getLastNumber();
-
-    if (digit === '.') {
-      if (lastNumber.includes('.')) {
-        return;
-      }
-
-      if (!lastNumber) {
-        this.currentExpression += '';
-      }
-    }
-
     this.currentExpression += digit;
   }
 
-  addOperator(operator) {
-    const lastChar = this.currentExpression.slice(-1);
+  addDot(value) {
+    const parsedExpression = this.currentExpression.split(/\s*([+\-*/])\s*/);
+    const lastNumber = parsedExpression[parsedExpression.length - 1];
 
-    if (['+', '-', '*', '/'].includes(lastChar)) {
-      this.currentExpression = this.currentExpression.slice(0, -1) + operator;
-      return;
+    if (lastNumber && lastNumber.indexOf('.') >= 0) {
+      return false;
     }
 
+    this.currentExpression += value;
+    return true;
+  }
+
+  addOperator(operator) {
     this.currentExpression += operator;
   }
 
@@ -71,95 +58,168 @@ class Calculator {
     }
   }
 
+  clear() {
+    this.currentExpression = '';
+    this.openParenthesesCount = 0;
+  }
+
   calculate() {
     try {
-      this.currentExpression = evaluate(this.currentExpression);
+      if (!this.currentExpression) {
+        return;
+      }
+
+      while (this.openParenthesesCount !== 0) {
+        this.currentExpression += ')';
+        this.openParenthesesCount -= 1;
+      }
+
+      const result = evaluate(this.currentExpression);
+      const decimalCount = getDecimalCount(result);
+
+      this.currentExpression = decimalCount <= 3 ? result : parseFloat(result).toFixed(3);
     } catch (error) {
+      window.alert('Incorrect expression');
       console.error(`Error calculating expression: ${error}`);
-      this.currentExpression = 'Error';
+      this.currentExpression = '';
     }
   }
 }
 
-class AddDigitCommand extends Command {
+class DigitCommand extends Command {
   constructor(app, calculator, digit) {
     super(app, calculator);
     this.digit = digit;
   }
 
   execute() {
+    this.saveBackup();
     this.calculator.addDigit(this.digit);
     return true;
   }
 }
 
-class AddOperatorCommand extends Command {
+class DotCommand extends Command {
+  execute() {
+    this.saveBackup();
+
+    const command = this.app.history.getLast();
+
+    if (!command || command instanceof OperatorCommand) {
+      return this.calculator.addDot('0.');
+    }
+
+    return this.calculator.addDot('.');
+  }
+}
+
+class OperatorCommand extends Command {
   constructor(app, calculator, operator) {
     super(app, calculator);
     this.operator = operator;
   }
 
   execute() {
+    const command = this.app.history.getLast();
+
+    if (command instanceof OperatorCommand) {
+      this.app.undo();
+    }
+
+    this.saveBackup();
     this.calculator.addOperator(this.operator);
     return true;
   }
 }
 
 class OpenParenthesisCommand extends Command {
-  constructor(app, calculator) {
-    super(app, calculator);
-  }
-
   execute() {
-    this.calculator.openParenthesis();
-    return true;
+    const command = this.app.history.getLast();
+
+    if (!command || command instanceof OperatorCommand || command instanceof OpenParenthesisCommand) {
+      this.saveBackup();
+      this.calculator.openParenthesis();
+      return true;
+    }
+
+    return false;
   }
 }
 
 class CloseParenthesisCommand extends Command {
-  constructor(app, calculator) {
-    super(app, calculator);
-  }
-
   execute() {
+    this.saveBackup();
     this.calculator.closeParenthesis();
     return true;
   }
 }
 
 class CalculateCommand extends Command {
-  constructor(app, calculator) {
-    super(app, calculator);
-  }
-
   execute() {
+    this.saveBackup();
     this.calculator.calculate();
-    return true;
+
+    if (this.calculator.currentExpression) {
+      this.app.history.reset(new DigitCommand(this.app, this.calculator, this.calculator.currentExpression));
+    }
+
+    return false;
+  }
+}
+
+class ClearCommand extends Command {
+  execute() {
+    this.calculator.clear();
+    this.app.history.reset();
+    return false;
   }
 }
 
 class UndoCommand extends Command {
-  constructor(app, calculator) {
-    super(app, calculator);
-  }
-
   execute() {
     this.app.undo();
     return false;
   }
 }
 
-class Application {
-  constructor(calculator) {
-    this.calculator = calculator;
+class CommandHistory {
+  constructor() {
     this.history = [];
+  }
+
+  getLast() {
+    return this.history[this.history.length - 1];
+  }
+
+  reset(command) {
+    if (command) {
+      this.history = [command];
+      return;
+    }
+    this.history = [];
+  }
+
+  push(command) {
+    if (command) {
+      this.history.push(command);
+    }
+  }
+
+  pop() {
+    return this.history.pop();
+  }
+}
+
+class Application {
+  constructor(calculator, history) {
+    this.calculator = calculator;
+    this.history = history;
   }
 
   executeCommand(command) {
     if (command.execute()) {
       this.history.push(command);
     }
-
     return this.calculator.currentExpression;
   }
 
@@ -176,9 +236,12 @@ class Application {
 
 export {
   Application,
+  CommandHistory,
+  ClearCommand,
   Calculator,
-  AddDigitCommand,
-  AddOperatorCommand,
+  DigitCommand,
+  DotCommand,
+  OperatorCommand,
   OpenParenthesisCommand,
   CloseParenthesisCommand,
   CalculateCommand,
