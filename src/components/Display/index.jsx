@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 
-import { Box, Container, Label } from './styled';
+import { Box, Container, Input } from './styled';
 
 export const Display = ({ expression }) => {
   return (
     <Box>
       <Container>
-        <Label>{expression || 0}</Label>
+        <Input value={expression || 0} disabled />
       </Container>
     </Box>
   );

@@ -9,7 +9,13 @@ export const Container = styled.div`
   border-bottom: 2px solid ${(props) => props.theme.primaryText};
 `;
 
-export const Label = styled.span`
+export const Input = styled.input`
+  text-align: right;
+  width: 100%;
+  color: ${(props) => props.theme.primaryText};
+  background-color: transparent;
+  border: none;
+  outline: none;
   font-size: 48px;
   font-weight: 500;
 `;
