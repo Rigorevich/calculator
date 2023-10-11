@@ -1,5 +1,4 @@
 import PropTypes from 'prop-types';
-import { useEffect } from 'react';
 
 import { keys } from '../../utils/keys';
 import { useKeyPress } from '../../hooks';
@@ -48,4 +47,8 @@ export const Keypad = ({ handlePressKey }) => {
       </Container>
     </Box>
   );
+};
+
+Keypad.propTypes = {
+  handlePressKey: PropTypes.func,
 };
