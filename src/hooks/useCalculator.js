@@ -1,11 +1,14 @@
 import { useState, useCallback } from 'react';
 
 import {
-  AddDigitCommand,
+  DigitCommand,
+  CommandHistory,
+  ClearCommand,
+  DotCommand,
   UndoCommand,
   CloseParenthesisCommand,
   OpenParenthesisCommand,
-  AddOperatorCommand,
+  OperatorCommand,
   CalculateCommand,
   Calculator,
   Application,
@@ -14,10 +17,12 @@ import {
 const getCommandType = (key, app, calculator) => {
   let newCommand = null;
 
-  if (key === '.' || /[0-9]/.test(key)) {
-    newCommand = new AddDigitCommand(app, calculator, key);
+  if (Number(key) >= 0 && Number(key) <= 9) {
+    newCommand = new DigitCommand(app, calculator, key);
+  } else if (key === '.') {
+    newCommand = new DotCommand(app, calculator);
   } else if (/[+\-*/]/.test(key)) {
-    newCommand = new AddOperatorCommand(app, calculator, key);
+    newCommand = new OperatorCommand(app, calculator, key);
   } else if (key === '=') {
     newCommand = new CalculateCommand(app, calculator);
   } else if (key === '(') {
@@ -26,16 +31,19 @@ const getCommandType = (key, app, calculator) => {
     newCommand = new CloseParenthesisCommand(app, calculator);
   } else if (key === 'C') {
     newCommand = new UndoCommand(app, calculator);
+  } else if (key === 'CE') {
+    newCommand = new ClearCommand(app, calculator);
   }
 
   return newCommand;
 };
 
-const splitExpression = (expression) => expression.match(/[+\-*/()]|\d+\.\d*|\d+/g).join(' ');
+const splitExpression = (expression) => expression.split(/\s*([+\-*/])\s*/).join(' ');
 
 export const useCalculator = () => {
   const [calculator] = useState(() => new Calculator());
-  const [app] = useState(() => new Application(calculator));
+  const [commandHistory] = useState(() => new CommandHistory());
+  const [app] = useState(() => new Application(calculator, commandHistory));
   const [state, setState] = useState(app.calculator.currentExpression);
 
   const pressKey = useCallback(
@@ -44,11 +52,10 @@ export const useCalculator = () => {
 
       if (command) {
         const expression = app.executeCommand(command);
-        console.log(expression);
-        setState(expression ? splitExpression(expression) : expression);
+        setState(splitExpression(expression));
       }
     },
-    [state]
+    [app, calculator]
   );
 
   return {
