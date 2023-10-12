@@ -1,4 +1,12 @@
-export const toggleSidebar = (value) => ({
+export const toggleSidebar = () => ({
   type: 'TOGGLE_SIDEBAR',
-  payload: value,
+});
+
+export const addExpression = (expression) => ({
+  type: 'ADD_EXPRESSION',
+  payload: expression,
+});
+
+export const clearHistory = () => ({
+  type: 'CLEAR_HISTORY',
 });
