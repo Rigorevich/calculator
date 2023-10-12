@@ -2,6 +2,7 @@ import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { toggleTheme } from '../../store/actions/themeActions';
+import { clearHistory } from '../../store/actions/historyActions';
 import { Dropdown } from '../Dropdown';
 
 import { Box, Container, Title, Button } from './styled';
@@ -15,7 +16,7 @@ export const Settings = () => {
       <Container>
         <Title>Settings</Title>
         <Dropdown theme={theme} cb={(option) => dispatch(toggleTheme(option))} />
-        <Button>Clear all history</Button>
+        <Button onClick={() => dispatch(clearHistory())}>Clear all history</Button>
       </Container>
     </Box>
   );

@@ -23,8 +23,8 @@ export const Button = styled.button`
   justify-content: center;
   align-items: center;
   font-size: 42px;
-  width: 110px;
-  height: 110px;
+  width: 115px;
+  height: 115px;
   color: ${(props) => props.theme.primaryText};
   background-color: ${(props) => props.theme.terniaryBachground};
   border: 1px solid ${(props) => props.theme.primaryText};

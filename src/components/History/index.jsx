@@ -8,8 +8,8 @@ export const History = ({ operations }) => {
       <Container>
         <Title>History</Title>
         <Content>
-          {operations.map((_, i) => (
-            <Operation key={i}>{i + 1}</Operation>
+          {operations.map((expression, i) => (
+            <Operation key={i}>{expression}</Operation>
           ))}
         </Content>
       </Container>

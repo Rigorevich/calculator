@@ -1,5 +1,7 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
+import { useDispatch } from 'react-redux';
 
+import { addExpression } from '../store/actions/historyActions';
 import {
   DigitCommand,
   CommandHistory,
@@ -41,18 +43,25 @@ const getCommandType = (key, app, calculator) => {
 const splitExpression = (expression) => expression.split(/\s*([+\-*/])\s*/).join(' ');
 
 export const useCalculator = () => {
-  const [calculator] = useState(() => new Calculator());
-  const [commandHistory] = useState(() => new CommandHistory());
-  const [app] = useState(() => new Application(calculator, commandHistory));
+  const calculator = useMemo(() => new Calculator(), []);
+  const commandHistory = useMemo(() => new CommandHistory(), []);
+  const app = useMemo(() => new Application(calculator, commandHistory), []);
+
   const [state, setState] = useState(app.calculator.currentExpression);
+  const dispatch = useDispatch();
 
   const pressKey = useCallback(
     (key) => {
       const command = getCommandType(key, app, calculator);
 
       if (command) {
-        const expression = app.executeCommand(command);
-        setState(splitExpression(expression));
+        if (command instanceof CalculateCommand) {
+          dispatch(addExpression(splitExpression(app.calculator.currentExpression)));
+        }
+
+        const expression = splitExpression(app.executeCommand(command));
+
+        setState(expression);
       }
     },
     [app, calculator]

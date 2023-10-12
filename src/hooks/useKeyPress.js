@@ -9,7 +9,8 @@ export const useKeyPress = (condition, action) => {
         action(key);
       }
     };
+
     window.addEventListener('keydown', onKeyup);
     return () => window.removeEventListener('keydown', onKeyup);
-  }, []);
+  }, [action, condition]);
 };

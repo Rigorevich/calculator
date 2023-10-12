@@ -16,7 +16,7 @@ export const Calculator = () => {
       <Container>
         <Section>
           <Display expression={state} />
-          <Keypad handlePressKey={(key) => pressKey(key)} />
+          <Keypad handlePressKey={pressKey} />
         </Section>
         {isOpen && <History operations={operations} />}
         <ControlPanel />
