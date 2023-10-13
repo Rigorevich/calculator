@@ -7,7 +7,7 @@ export const themes = {
     secondaryText: '#666666',
     accentText: '#FFFFFF',
     accentBackground: '#cf6b61',
-    terniaryBachground: '#f2f2f2',
+    terniaryBackground: '#f2f2f2',
   },
   darkTheme: {
     label: 'Dark Theme',
@@ -17,6 +17,6 @@ export const themes = {
     secondaryText: '#999999',
     accentText: '#FFFFFF',
     accentBackground: '#cf6b61',
-    terniaryBachground: '#444444',
+    terniaryBackground: '#444444',
   },
 };
