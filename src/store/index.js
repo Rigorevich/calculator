@@ -4,7 +4,11 @@ import rootReducer from './reducers/rootReducer';
 
 const saveToLocalStorage = (state) => {
   try {
-    const serialisedState = JSON.stringify(state);
+    const dataToSave = {
+      theme: state.theme,
+      history: state.history,
+    };
+    const serialisedState = JSON.stringify(dataToSave);
     localStorage.setItem('persistantState', serialisedState);
   } catch (e) {
     console.warn(e);
@@ -15,7 +19,11 @@ const loadFromLocalStorage = () => {
   try {
     const serialisedState = localStorage.getItem('persistantState');
     if (serialisedState === null) return undefined;
-    return JSON.parse(serialisedState);
+    const loadedData = JSON.parse(serialisedState);
+    return {
+      theme: loadedData.theme,
+      history: loadedData.history,
+    };
   } catch (e) {
     console.warn(e);
     return undefined;
