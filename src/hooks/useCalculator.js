@@ -1,7 +1,6 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { addExpression } from '../store/actions/historyActions';
 import {
   DigitCommand,
   CommandHistory,
@@ -16,14 +15,14 @@ import {
   Application,
 } from '../utils/command';
 
-const getCommandType = (key, app, calculator) => {
+const getCommand = (key, app, calculator) => {
   let newCommand = null;
 
   if (Number(key) >= 0 && Number(key) <= 9) {
     newCommand = new DigitCommand(app, calculator, key);
   } else if (key === '.') {
     newCommand = new DotCommand(app, calculator);
-  } else if (/[+\-*/]/.test(key)) {
+  } else if (['+', '-', '*', '/'].indexOf(key) >= 0) {
     newCommand = new OperatorCommand(app, calculator, key);
   } else if (key === '=') {
     newCommand = new CalculateCommand(app, calculator);
@@ -40,35 +39,28 @@ const getCommandType = (key, app, calculator) => {
   return newCommand;
 };
 
-const splitExpression = (expression) => expression.split(/\s*([+\-*/])\s*/).join(' ');
-
 export const useCalculator = () => {
+  const dispatch = useDispatch();
+
   const calculator = useMemo(() => new Calculator(), []);
   const commandHistory = useMemo(() => new CommandHistory(), []);
-  const app = useMemo(() => new Application(calculator, commandHistory), []);
-
-  const [state, setState] = useState(app.calculator.currentExpression);
-  const dispatch = useDispatch();
+  const app = useMemo(
+    () => new Application(calculator, commandHistory, dispatch),
+    [calculator, commandHistory, dispatch]
+  );
 
   const pressKey = useCallback(
     (key) => {
-      const command = getCommandType(key, app, calculator);
+      const command = getCommand(key, app, calculator);
 
       if (command) {
-        if (command instanceof CalculateCommand) {
-          dispatch(addExpression(splitExpression(app.calculator.currentExpression)));
-        }
-
-        const expression = splitExpression(app.executeCommand(command));
-
-        setState(expression);
+        app.executeCommand(command);
       }
     },
     [app, calculator]
   );
 
   return {
-    state,
     pressKey,
   };
 };
