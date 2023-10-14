@@ -7,6 +7,10 @@ function getDecimalCount(num) {
   }
 }
 
+function splitExpression(expression) {
+  return expression.split(/\s*([+\-*/])\s*/);
+}
+
 function toRpn(statement) {
   const statementArr = statement.match(/[+\-*/()]|\d+\.\d+|\d+/g);
   let result = [];
@@ -54,6 +58,8 @@ function toRpn(statement) {
 
 function evaluate(expression) {
   const tokens = toRpn(expression);
+  // 2 - 4 - -
+
   const stack = [];
 
   for (const token of tokens) {
@@ -68,25 +74,34 @@ function evaluate(expression) {
           stack.push(operand1 + operand2);
           break;
         case '-':
-          stack.push(operand1 - operand2);
+          if (!operand1 && operand2) {
+            stack.push(operand2 * -1);
+          } else {
+            stack.push(operand1 - operand2);
+          }
           break;
         case '*':
           stack.push(operand1 * operand2);
           break;
         case '/':
+          if (operand2 === 0) {
+            throw new Error('Cannot divide by zero');
+          }
           stack.push(operand1 / operand2);
           break;
         default:
-          throw new Error(`Uncorrected operator: ${token}`);
+          throw new Error(`Invalid symbol: ${token}`);
       }
     }
   }
 
-  if (stack.length !== 1) {
-    throw new Error('Uncorrected expression');
+  if (stack.length !== 1 || !isFinite(stack[0])) {
+    throw new Error('Invalid expression');
   }
 
   return `${stack[0]}`;
 }
 
-export { evaluate, toRpn, getDecimalCount };
+console.log(toRpn('-2-(-4)'));
+
+export { evaluate, getDecimalCount, splitExpression };
