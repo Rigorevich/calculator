@@ -1,4 +1,6 @@
-import { evaluate, getDecimalCount } from './calculating';
+import { changeExpression } from '../store/actions/expressionActions';
+import { addExpression } from '../store/actions/historyActions';
+import { evaluate, getDecimalCount, splitExpression } from './calculating';
 
 class Command {
   constructor(app, calculator) {
@@ -27,19 +29,24 @@ class Calculator {
   }
 
   addDigit(digit) {
+    if (this.currentExpression === '') {
+      if (digit === '0') {
+        return;
+      }
+    }
+
     this.currentExpression += digit;
   }
 
   addDot(value) {
-    const parsedExpression = this.currentExpression.split(/\s*([+\-*/])\s*/);
+    const parsedExpression = splitExpression(this.currentExpression);
     const lastNumber = parsedExpression[parsedExpression.length - 1];
 
     if (lastNumber && lastNumber.indexOf('.') >= 0) {
-      return false;
+      return;
     }
 
     this.currentExpression += value;
-    return true;
   }
 
   addOperator(operator) {
@@ -65,23 +72,18 @@ class Calculator {
 
   calculate() {
     try {
-      if (!this.currentExpression) {
-        return;
-      }
-
-      while (this.openParenthesesCount !== 0) {
-        this.currentExpression += ')';
-        this.openParenthesesCount -= 1;
-      }
+      if (!this.currentExpression) return;
 
       const result = evaluate(this.currentExpression);
       const decimalCount = getDecimalCount(result);
 
       this.currentExpression = decimalCount <= 3 ? result : parseFloat(result).toFixed(3);
     } catch (error) {
-      window.alert('Incorrect expression');
-      console.error(`Error calculating expression: ${error}`);
+      alert(error);
+      console.error(error);
       this.currentExpression = '';
+    } finally {
+      this.openParenthesesCount = 0;
     }
   }
 }
@@ -93,9 +95,13 @@ class DigitCommand extends Command {
   }
 
   execute() {
+    if (this.app.history.isEmpty() && this.calculator.currentExpression) {
+      this.calculator.currentExpression = '';
+    }
+
     this.saveBackup();
     this.calculator.addDigit(this.digit);
-    return true;
+    this.backup !== this.calculator.currentExpression && this.app.history.push(this);
   }
 }
 
@@ -104,12 +110,13 @@ class DotCommand extends Command {
     this.saveBackup();
 
     const command = this.app.history.getLast();
+    const value = !command || command instanceof OperatorCommand ? '0.' : '.';
 
-    if (!command || command instanceof OperatorCommand) {
-      return this.calculator.addDot('0.');
+    this.calculator.addDot(value);
+
+    if (this.backup !== this.calculator.currentExpression) {
+      this.app.history.push(this);
     }
-
-    return this.calculator.addDot('.');
   }
 }
 
@@ -120,15 +127,21 @@ class OperatorCommand extends Command {
   }
 
   execute() {
-    const command = this.app.history.getLast();
+    if (this.app.history.isEmpty()) {
+      const value =
+        this.calculator.currentExpression === '0' || this.calculator.currentExpression === ''
+          ? 0
+          : this.calculator.currentExpression;
+      this.app.executeCommand(new DigitCommand(this.app, this.calculator, value));
+    }
 
-    if (command instanceof OperatorCommand) {
+    if (this.app.history.getLast() instanceof OperatorCommand) {
       this.app.undo();
     }
 
     this.saveBackup();
     this.calculator.addOperator(this.operator);
-    return true;
+    this.app.history.push(this);
   }
 }
 
@@ -139,10 +152,8 @@ class OpenParenthesisCommand extends Command {
     if (!command || command instanceof OperatorCommand || command instanceof OpenParenthesisCommand) {
       this.saveBackup();
       this.calculator.openParenthesis();
-      return true;
+      this.app.history.push(this);
     }
-
-    return false;
   }
 }
 
@@ -150,20 +161,26 @@ class CloseParenthesisCommand extends Command {
   execute() {
     this.saveBackup();
     this.calculator.closeParenthesis();
-    return true;
+
+    this.backup !== this.calculator.currentExpression && this.app.history.push(this);
   }
 }
 
 class CalculateCommand extends Command {
   execute() {
-    this.saveBackup();
-    this.calculator.calculate();
-
-    if (this.calculator.currentExpression) {
-      this.app.history.reset(new DigitCommand(this.app, this.calculator, this.calculator.currentExpression));
+    if (this.app.history.getLast() instanceof OperatorCommand) {
+      this.app.undo();
     }
 
-    return false;
+    const backup = this.calculator.currentExpression;
+    this.calculator.calculate();
+
+    if (backup !== this.calculator.currentExpression) {
+      this.app.dispatch(addExpression(splitExpression(backup).join(' ')));
+    }
+
+    this.saveBackup();
+    this.app.history.reset();
   }
 }
 
@@ -171,14 +188,17 @@ class ClearCommand extends Command {
   execute() {
     this.calculator.clear();
     this.app.history.reset();
-    return false;
   }
 }
 
 class UndoCommand extends Command {
   execute() {
+    if (this.calculator.currentExpression && this.app.history.isEmpty()) {
+      this.calculator.currentExpression = '';
+      return;
+    }
+
     this.app.undo();
-    return false;
   }
 }
 
@@ -187,15 +207,15 @@ class CommandHistory {
     this.history = [];
   }
 
+  isEmpty() {
+    return this.history.length === 0;
+  }
+
   getLast() {
     return this.history[this.history.length - 1];
   }
 
-  reset(command) {
-    if (command) {
-      this.history = [command];
-      return;
-    }
+  reset() {
     this.history = [];
   }
 
@@ -211,16 +231,21 @@ class CommandHistory {
 }
 
 class Application {
-  constructor(calculator, history) {
+  constructor(calculator, history, dispatch) {
     this.calculator = calculator;
     this.history = history;
+    this.dispatch = dispatch;
   }
 
   executeCommand(command) {
-    if (command.execute()) {
-      this.history.push(command);
+    if (command) {
+      command.execute();
     }
-    return this.calculator.currentExpression;
+
+    console.log(this.history);
+    const parsedExpression = splitExpression(this.calculator.currentExpression).join(' ');
+
+    this.dispatch(changeExpression(parsedExpression));
   }
 
   undo() {
@@ -230,7 +255,9 @@ class Application {
       command.undo();
     }
 
-    return this.calculator.currentExpression;
+    const parsedExpression = splitExpression(this.calculator.currentExpression).join(' ');
+
+    this.dispatch(changeExpression(parsedExpression));
   }
 }
 
