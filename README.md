@@ -22,7 +22,7 @@
 
 #### Диаграмма компонентов:
 
-> ![diagramma of components](./image.png)
+> ![diagramma of components](./public/image.png)
 
 #### Необходимый функционал:
 
