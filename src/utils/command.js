@@ -242,10 +242,7 @@ class Application {
       command.execute();
     }
 
-    console.log(this.history);
-    const parsedExpression = splitExpression(this.calculator.currentExpression).join(' ');
-
-    this.dispatch(changeExpression(parsedExpression));
+    this.dispatch(changeExpression(this.calculator.currentExpression));
   }
 
   undo() {
@@ -255,9 +252,7 @@ class Application {
       command.undo();
     }
 
-    const parsedExpression = splitExpression(this.calculator.currentExpression).join(' ');
-
-    this.dispatch(changeExpression(parsedExpression));
+    this.dispatch(changeExpression(this.calculator.currentExpression));
   }
 }
 
