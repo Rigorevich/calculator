@@ -1,6 +1,6 @@
 export const themes = {
   lightTheme: {
-    label: 'Light Theme',
+    label: 'light',
     primaryBackground: '#FFFFFF',
     primaryText: '#333333',
     secondaryBackground: '#434343',
@@ -10,7 +10,7 @@ export const themes = {
     terniaryBackground: '#f2f2f2',
   },
   darkTheme: {
-    label: 'Dark Theme',
+    label: 'dark',
     primaryBackground: '#333333',
     primaryText: '#FFFFFF',
     secondaryBackground: '#444444',
