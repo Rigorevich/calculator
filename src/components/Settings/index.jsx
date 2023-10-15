@@ -16,7 +16,9 @@ export const Settings = () => {
       <Container>
         <Title>Settings</Title>
         <Dropdown theme={theme} cb={(option) => dispatch(toggleTheme(option))} />
-        <Button onClick={() => dispatch(clearHistory())}>Clear all history</Button>
+        <Button data-test="settings-clear-history" onClick={() => dispatch(clearHistory())}>
+          Clear all history
+        </Button>
       </Container>
     </Box>
   );

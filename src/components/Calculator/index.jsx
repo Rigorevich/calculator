@@ -8,14 +8,17 @@ import '../../utils/calculating';
 import { Box, Container, Section } from './styled';
 
 export const Calculator = () => {
-  const { state, pressKey } = useCalculator();
-  const { isOpen, operations } = useSelector((state) => state.history);
+  const history = useSelector((state) => state.history);
+  const expression = useSelector((state) => state.expression);
+
+  const { isOpen, operations } = history;
+  const { pressKey } = useCalculator();
 
   return (
     <Box>
       <Container>
         <Section>
-          <Display expression={state} />
+          <Display expression={expression} />
           <Keypad handlePressKey={pressKey} />
         </Section>
         {isOpen && <History operations={operations} />}

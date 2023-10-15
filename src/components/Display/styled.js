@@ -7,6 +7,10 @@ export const Container = styled.div`
   justify-content: flex-end;
   padding: 10px 80px;
   border-bottom: 2px solid ${(props) => props.theme.primaryText};
+
+  @media (max-width: 1024px) {
+    padding: 10px 20px;
+  }
 `;
 
 export const Input = styled.input`
@@ -18,4 +22,8 @@ export const Input = styled.input`
   outline: none;
   font-size: 48px;
   font-weight: 500;
+
+  @media (max-width: 768px) {
+    font-size: 32px;
+  }
 `;

@@ -6,7 +6,7 @@ export const Display = ({ expression }) => {
   return (
     <Box>
       <Container>
-        <Input value={expression || 0} disabled />
+        <Input data-test="display" value={expression || 0} disabled />
       </Container>
     </Box>
   );

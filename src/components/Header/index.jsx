@@ -6,14 +6,16 @@ import { Box, Container, Logo, Nav, List, Item, Link } from './styled';
 
 export const Header = () => {
   return (
-    <Box>
+    <Box data-test="header">
       <Container>
         <Logo>Calculator App</Logo>
-        <Nav>
+        <Nav data-test="header-nav">
           <List>
             {routes.map(({ path, label }) => (
               <Item key={path}>
-                <Link to={path}>{label}</Link>
+                <Link data-test="header-link" to={path}>
+                  {label}
+                </Link>
               </Item>
             ))}
           </List>

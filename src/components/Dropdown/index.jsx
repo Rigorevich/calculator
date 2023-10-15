@@ -20,6 +20,7 @@ export const Dropdown = ({ theme, cb }) => {
     <DropDownContainer ref={ref}>
       <DropDownLabel>Switch theme</DropDownLabel>
       <DropDownHeader
+        data-test="settings-dropdown-button"
         onClick={() => {
           setIsOpen((prev) => !prev);
         }}
@@ -29,8 +30,12 @@ export const Dropdown = ({ theme, cb }) => {
       {isOpen && (
         <DropDownList>
           {Object.values(themes).map((option) => (
-            <DropDownItem key={option.label} onClick={() => handleToggleTheme(option)}>
-              {option.label}
+            <DropDownItem
+              data-test={`theme-option-${option.label}`}
+              key={option.label}
+              onClick={() => handleToggleTheme({ ...option, label: `${option.label} Theme` })}
+            >
+              {option.label} Theme
             </DropDownItem>
           ))}
         </DropDownList>

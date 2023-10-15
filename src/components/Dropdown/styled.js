@@ -10,8 +10,9 @@ export const DropDownLabel = styled.span`
 `;
 
 export const DropDownHeader = styled.div`
+  text-transform: capitalize;
   border: 1px solid ${(props) => props.theme.primaryText};
-  background-color: ${(props) => props.theme.terniaryBachground};
+  background-color: ${(props) => props.theme.terniaryBackground};
   padding: 0.5em 2em 0.5em 1em;
   margin-bottom: 0.2em;
   border-radius: 5px;
@@ -25,7 +26,7 @@ export const DropDownListContainer = styled.div``;
 export const DropDownList = styled.div`
   padding: 0;
   margin: 0;
-  background-color: ${(props) => props.theme.terniaryBachground};
+  background-color: ${(props) => props.theme.terniaryBackground};
   border: 1px solid ${(props) => props.theme.primaryText};
   border-radius: 5px;
   box-sizing: border-box;
@@ -34,6 +35,7 @@ export const DropDownList = styled.div`
 `;
 
 export const DropDownItem = styled.div`
+  text-transform: capitalize;
   list-style: none;
   cursor: pointer;
   transition: opacity easy-it-out 0.2s;

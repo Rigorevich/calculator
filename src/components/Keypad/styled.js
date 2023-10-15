@@ -9,6 +9,10 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   padding: 10px 80px;
+
+  @media (max-width: 1024px) {
+    padding: 10px 20px;
+  }
 `;
 
 export const Row = styled.div`
@@ -26,7 +30,7 @@ export const Button = styled.button`
   width: 115px;
   height: 115px;
   color: ${(props) => props.theme.primaryText};
-  background-color: ${(props) => props.theme.terniaryBachground};
+  background-color: ${(props) => props.theme.terniaryBackground};
   border: 1px solid ${(props) => props.theme.primaryText};
   border-radius: 25px;
   cursor: pointer;
@@ -38,5 +42,24 @@ export const Button = styled.button`
 
   &:active {
     transform: scale(0.95);
+  }
+
+  @media (max-width: 1280px) {
+    font-size: 32px;
+    width: 100px;
+    height: 100px;
+  }
+
+  @media (max-width: 1024px) {
+    font-size: 28px;
+    width: 75px;
+    height: 75px;
+  }
+
+  @media (max-width: 485px) {
+    font-size: 22px;
+    width: 55px;
+    height: 55px;
+    border-radius: 15px;
   }
 `;

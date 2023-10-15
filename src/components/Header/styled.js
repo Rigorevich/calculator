@@ -16,6 +16,10 @@ export const Container = styled.div`
 export const Logo = styled.h2`
   color: ${(props) => props.theme.accentText};
   font-weight: 500;
+
+  @media (max-width: 768px) {
+    font-size: 20px;
+  }
 `;
 
 export const Nav = styled.nav``;
@@ -65,5 +69,10 @@ export const Link = styled(NavLink)`
   &:hover::after {
     width: 100%;
     left: 0;
+  }
+
+  @media (max-width: 768px) {
+    font-weight: 500;
+    font-size: 16px;
   }
 `;

@@ -18,4 +18,8 @@ export const HistoryIcon = styled(History)`
   &:active {
     transform: scale(0.95);
   }
+
+  @media (max-width: 768px) {
+    display: none;
+  }
 `;
