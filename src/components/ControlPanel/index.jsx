@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux';
 
-import { toggleSidebar } from '../../store/actions/historyActions';
+import { toggleSidebar } from '@/store/actions/historyActions';
 
 import { HistoryIcon } from './styled';
 

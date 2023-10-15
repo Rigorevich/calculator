@@ -13,5 +13,5 @@ export const Display = ({ expression }) => {
 };
 
 Display.propTypes = {
-  expression: PropTypes.string,
+  expression: PropTypes.string.isRequired,
 };

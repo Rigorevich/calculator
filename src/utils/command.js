@@ -1,5 +1,5 @@
-import { changeExpression } from '../store/actions/expressionActions';
-import { addExpression } from '../store/actions/historyActions';
+import { changeExpression } from '@/store/actions/expressionActions';
+import { addExpression } from '@/store/actions/historyActions';
 import { evaluate, getDecimalCount, splitExpression } from './calculating';
 
 class Command {

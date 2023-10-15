@@ -7,3 +7,4 @@ export * from './Keypad';
 export * from './History';
 export * from './ControlPanel';
 export * from './ErrorBoundary';
+export * from './App';

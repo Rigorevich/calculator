@@ -1,8 +1,8 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { toggleTheme } from '../../store/actions/themeActions';
-import { clearHistory } from '../../store/actions/historyActions';
+import { toggleTheme } from '@/store/actions/themeActions';
+import { clearHistory } from '@/store/actions/historyActions';
 import { Dropdown } from '../Dropdown';
 
 import { Box, Container, Title, Button } from './styled';

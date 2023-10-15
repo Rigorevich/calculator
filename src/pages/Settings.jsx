@@ -1,4 +1,4 @@
-import { Header, Settings as Content } from '../components';
+import { Header, Settings as Content } from '@/components';
 
 import styled from 'styled-components';
 

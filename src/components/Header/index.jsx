@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { routes } from '../../utils/routes';
+import { routes } from '@/utils/routes';
 
 import { Box, Container, Logo, Nav, List, Item, Link } from './styled';
 

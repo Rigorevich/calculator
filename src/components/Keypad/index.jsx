@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 
-import { keys } from '../../utils/keys';
-import { useKeyPress } from '../../hooks';
+import { keys } from '@/utils/keys';
+import { useKeyPress } from '@/hooks';
 
 import { Box, Container, Row, Button } from './styled';
 

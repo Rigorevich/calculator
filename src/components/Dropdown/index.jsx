@@ -1,7 +1,8 @@
+import PropTypes from 'prop-types';
 import { useState, useRef } from 'react';
 
-import { useClickOutside } from '../../hooks';
-import { themes } from '../../utils/theme';
+import { useClickOutside } from '@/hooks';
+import { themes } from '@/utils/theme';
 
 import { DropDownContainer, DropDownLabel, DropDownHeader, DropDownList, DropDownItem } from './styled';
 
@@ -42,4 +43,9 @@ export const Dropdown = ({ theme, cb }) => {
       )}
     </DropDownContainer>
   );
+};
+
+Dropdown.propTypes = {
+  theme: PropTypes.object.isRequired,
+  cb: PropTypes.func.isRequired,
 };

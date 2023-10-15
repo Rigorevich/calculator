@@ -1,4 +1,4 @@
-import { Header, Calculator } from '../components';
+import { Header, Calculator } from '@/components';
 
 import styled from 'styled-components';
 

@@ -1,4 +1,4 @@
-import { ReactComponent as History } from '../../assets/icons/history.svg';
+import { ReactComponent as History } from '@/assets/icons/history.svg';
 
 import styled from 'styled-components';
 

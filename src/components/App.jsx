@@ -2,8 +2,9 @@ import { ThemeProvider } from 'styled-components';
 import { useSelector } from 'react-redux';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
+import { routes } from '@/utils/routes';
+
 import { GlobalStyle } from '../globalStyles';
-import { routes } from '../utils/routes';
 
 const router = createBrowserRouter(routes);
 

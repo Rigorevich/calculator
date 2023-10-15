@@ -1,9 +1,7 @@
 import { useSelector } from 'react-redux';
 
-import { useCalculator } from '../../hooks';
+import { useCalculator } from '@/hooks';
 import { Display, Keypad, History, ControlPanel } from '../';
-
-import '../../utils/calculating';
 
 import { Box, Container, Section } from './styled';
 

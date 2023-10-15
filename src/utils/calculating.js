@@ -102,6 +102,4 @@ function evaluate(expression) {
   return `${stack[0]}`;
 }
 
-console.log(toRpn('-2-(-4)'));
-
 export { evaluate, getDecimalCount, splitExpression };
