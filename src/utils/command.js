@@ -25,6 +25,7 @@ class Command {
 class Calculator {
   constructor() {
     this.currentExpression = '';
+    this.error = false;
     this.openParenthesesCount = 0;
   }
 
@@ -72,18 +73,13 @@ class Calculator {
 
   calculate() {
     try {
-      if (!this.currentExpression) return;
+      const resultNum = evaluate(this.currentExpression);
 
-      const result = evaluate(this.currentExpression);
-      const decimalCount = getDecimalCount(result);
-
-      this.currentExpression = decimalCount <= 3 ? result : parseFloat(result).toFixed(3);
+      this.currentExpression = getDecimalCount(resultNum) <= 3 ? resultNum : parseFloat(resultNum).toFixed(3);
+      return true;
     } catch (error) {
       alert(error);
-      console.error(error);
-      this.currentExpression = '';
-    } finally {
-      this.openParenthesesCount = 0;
+      return false;
     }
   }
 }
@@ -109,6 +105,14 @@ class DotCommand extends Command {
   execute() {
     this.saveBackup();
 
+    if (this.app.history.isEmpty()) {
+      const value =
+        this.calculator.currentExpression === '0' || this.calculator.currentExpression === ''
+          ? 0
+          : this.calculator.currentExpression;
+      this.app.executeCommand(new DigitCommand(this.app, this.calculator, value));
+    }
+
     const command = this.app.history.getLast();
     const value = !command || command instanceof OperatorCommand ? '0.' : '.';
 
@@ -127,6 +131,10 @@ class OperatorCommand extends Command {
   }
 
   execute() {
+    if (this.app.history.getLast() instanceof OpenParenthesisCommand) {
+      return;
+    }
+
     if (this.app.history.isEmpty()) {
       const value =
         this.calculator.currentExpression === '0' || this.calculator.currentExpression === ''
@@ -149,6 +157,10 @@ class OpenParenthesisCommand extends Command {
   execute() {
     const command = this.app.history.getLast();
 
+    if (this.app.history.isEmpty() && this.calculator.currentExpression) {
+      return;
+    }
+
     if (!command || command instanceof OperatorCommand || command instanceof OpenParenthesisCommand) {
       this.saveBackup();
       this.calculator.openParenthesis();
@@ -168,15 +180,24 @@ class CloseParenthesisCommand extends Command {
 
 class CalculateCommand extends Command {
   execute() {
+    while (this.calculator.openParenthesesCount > 0) {
+      this.calculator.closeParenthesis();
+    }
+
+    if (!isNaN(this.calculator.currentExpression)) {
+      return;
+    }
+
+    this.saveBackup();
+
     if (this.app.history.getLast() instanceof OperatorCommand) {
       this.app.undo();
     }
 
-    const backup = this.calculator.currentExpression;
-    this.calculator.calculate();
-
-    if (backup !== this.calculator.currentExpression) {
-      this.app.dispatch(addExpression(splitExpression(backup).join(' ')));
+    if (this.calculator.calculate()) {
+      this.app.dispatch(addExpression(splitExpression(this.backup).join(' ')));
+    } else {
+      this.app.executeCommand(new ClearCommand(this.app, this.calculator));
     }
 
     this.saveBackup();
